@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mv pair-flow *)",
+      "Bash(mv intent-flow/features intent-flow/work)",
+      "Bash(mv intent-flow/work/_template/intention.md intent-flow/work/_template/intent.md)"
+    ]
+  }
+}
