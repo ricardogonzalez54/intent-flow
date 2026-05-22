@@ -41,36 +41,45 @@ If none of those apply, just code. A bug fix with a clear commit message is a pe
 
 **Important:** the criterion is *complexity, continuity, and drift-risk* — not the type of change. A bug fix that triggers a structural refactor deserves a work folder. A 5-minute refactor with no consequences does not.
 
-## Structure
+## Structure (what adopters get)
 
 ```
-project/
+your-project/
 ├── AGENTS.md                       # entry point for coding agents (agent-agnostic)
 ├── intent-flow/
 │   ├── README.md                   # operational manual
 │   ├── product.md                  # global product intent (living)
 │   ├── architecture.md             # current architecture (living)
-│   ├── adr/                        # cross-feature decisions, immortalized
+│   ├── adr/                        # cross-cutting decisions, immortalized
 │   └── work/
 │       ├── _template/              # copy from here for new work units
 │       └── <work-name>/
-│           ├── intent.md           # what we want (immutable once sealed)
-│           ├── decisions.md        # work-internal decisions (living)
-│           ├── plan.md             # implementation plan (living)
-│           └── status.md           # current focus, handoff, blockers
+│           ├── intent.md           # what we want + decisions (sealed together)
+│           └── status.md           # phase, focus, handoff (live)
 └── .agent/
     └── skills/                     # reusable technical Skills (Anthropic convention)
 ```
 
-A "work unit" is any discrete piece of work worth tracking: a feature, a refactor, a migration, an infra change, a deep bug fix. It is the framework's atomic unit. The `type:` frontmatter field in `intent.md` lets you tag a unit with one or more categories (a single work item can be both `refactor` and `bugfix`).
+A "work unit" is any discrete piece of work worth tracking: a feature, a refactor, a migration, an infra change, a deep bug fix. It is the framework's atomic unit. Two files per unit, deliberately. Plans live in the agent's native task tooling; the next concrete step across sessions lives in `status.md → Handoff`. Cross-cutting decisions go in `intent-flow/adr/`.
+
+The `type:` frontmatter field in `intent.md` lets you tag a unit with one or more categories (a single work item can be both `refactor` and `bugfix`).
 
 ## Quickstart
 
-1. Drop the `intent-flow/` folder into your repo (manual copy for v0.1; `intent-flow init` CLI is planned for v0.2).
+1. Copy the contents of [`scaffold/`](./scaffold) into your repo root (manual copy for v0.1; `intent-flow init` CLI is planned for v0.2).
 2. Point your coding agent at `AGENTS.md` (auto-discovered by most modern agents — Claude Code, Codex, Cursor, Aider).
 3. Start working. Activate work folders only when the criteria above are met.
 
-For the full operational manual — workflow, lifecycle of intent, conventions — see [`intent-flow/README.md`](./intent-flow/README.md).
+For the full operational manual — workflow, lifecycle of intent, conventions — see [`scaffold/intent-flow/README.md`](./scaffold/intent-flow/README.md).
+
+## Repo layout (for contributors)
+
+This repository hosts the framework itself and is split into two concerns:
+
+- [`scaffold/`](./scaffold) — the deliverable. Pure templates and universal docs. What `intent-flow init` will copy into adopter repos in v0.2. Nothing here references intent-flow's own internals.
+- [`intent-flow/`](./intent-flow) — dogfood. The framework applied to this project (real `product.md`, `architecture.md`, ADRs, and eventually `work/` units). Demonstrates and validates the convention.
+
+If you are adopting intent-flow, you only need `scaffold/`. If you are contributing, see the dogfood for how the framework is meant to be used in anger.
 
 ## Status
 
