@@ -27,7 +27,7 @@ The split is what keeps the deliverable clean: adopters never inherit decisions 
 - **Contents:**
   - `AGENTS.md` — agent entrypoint, copied to adopter repo root.
   - `intent-flow/README.md` — operational manual (universal, not adopter-specific).
-  - `intent-flow/product.md`, `intent-flow/architecture.md` — empty templates the adopter fills in.
+  - `intent-flow/product.md`, `intent-flow/architecture.md` — empty templates. Optional at the project level; the adopter fills them either at adoption time or just-in-time when a shipped work unit warrants creating them.
   - `intent-flow/adr/_template.md` — ADR template only. The scaffold contains no real ADRs.
   - `intent-flow/work/_template/` — the two work-unit artifact templates (`intent.md`, `status.md`).
   - `.agent/skills/_template/SKILL.md` — Anthropic Skills convention placeholder.
@@ -66,10 +66,14 @@ agent runs bootstrap check; if intent-flow/ exists with core structure, framewor
     ▼
 agent routes per AGENTS.md:
     - existing work unit → read status.md, branch on `phase:` field
-        - defining → load intent.md (draft), iterate to seal
+        - defining → load intent.md (draft) + project-level docs if they exist, iterate to seal
         - building → load intent.md (sealed), execute per Handoff
         - blocked / shipped / archived → surface or do nothing
     - new work unit → evaluate activation criteria, possibly create work/<name>/ with intent.md + status.md
+
+On ship (phase: shipped), agent scans the sealed intent for product/architecture
+signals and proposes diffs to project-level docs only when warranted. Two
+human checkpoints (review-or-not, accept-diff-or-not) gate any change.
 ```
 
 Contributor workflow on this repo:

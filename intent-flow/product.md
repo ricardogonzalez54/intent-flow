@@ -54,7 +54,9 @@ Existing spec-driven frameworks (Spec Kit, Kiro, BMAD, OpenSpec, Tessl) fall int
 
 **v0.1.2** — Repo split into `scaffold/` (deliverable for adopters) and `intent-flow/` (dogfood). ADR-0001 documents the original naming decisions. Setup-phase scaffolding removed.
 
-**v0.1.3 (current)** — Framework reduced to its primitive form, two artifacts per work unit:
+**v0.1.4 (current)** — Project-level docs (`product.md`, `architecture.md`) made optional, with explicit rules: read on `defining`, propose updates only on `shipped` if the sealed intent contains product/architecture signals, never edit silently, two human checkpoints. Closes the last unspecified surface before v0.2.
+
+**v0.1.3** — Framework reduced to its primitive form, two artifacts per work unit:
 
 - `intent.md` (sealable, includes its own `Decisions` section — sealed together).
 - `status.md` (live, with `phase:` field as the single bootstrap-read signal).

@@ -7,8 +7,8 @@ This document explains how to work within an `intent-flow/` folder once it has b
 ```
 intent-flow/
 ├── README.md           # this file
-├── product.md          # global product intent (living)
-├── architecture.md     # current architecture (living)
+├── product.md          # global product intent (living, OPTIONAL)
+├── architecture.md     # current architecture (living, OPTIONAL)
 ├── adr/                # cross-cutting decisions, immortalized
 │   └── _template.md
 └── work/
@@ -17,6 +17,8 @@ intent-flow/
     │   └── status.md   # phase, focus, handoff (live)
     └── <work-name>/    # one folder per active or historical work unit
 ```
+
+`adr/` and `work/` are required for the framework to be considered active. `product.md` and `architecture.md` are optional project-level docs — the framework works without them, and they get activated on demand (see "Project-level docs" below).
 
 ## When to start a work folder
 
@@ -69,6 +71,49 @@ Write a clear Handoff before ending every session.
 
 There is intentionally no "living decisions" slot. If a decision surfaces after sealing, isn't cross-cutting, and isn't large enough for intent-v2, a commit message is the right home. The absence of a halfway slot forces honesty about decision size.
 
+## Project-level docs
+
+`product.md` and `architecture.md` are the project-scope analogs of `intent.md` at the work-unit scope. They capture the "what/why" of the project as a whole (product) and "how it currently is" (architecture). Both are living and both are optional.
+
+### Lifecycle
+
+There is no sealed/draft lifecycle for these files — projects pivot, sealing at this scope makes no sense. The audit trail for drift at the project scope is the **git history of the file itself**. At the moment any work unit's `intent.md` was sealed, what `product.md` said at that commit is the project intent the work unit was supposed to honor.
+
+### When the agent reads them
+
+- **When drafting a new `intent.md`** (phase `defining`), if they exist. The new work unit must align with what the project says it is and how it is shaped.
+- **On demand during `building`**, if a question surfaces that genuinely depends on project-level context (e.g., "does this fit our principles?").
+- **Never preloaded on session start.** They are not part of bootstrap. The framework's lightweight promise depends on this.
+
+### When the agent updates them
+
+When a work unit transitions to `phase: shipped`, the agent reviews the sealed `intent.md` (already in context, no extra loading needed) looking for signals:
+
+| Touches `product.md` if intent describes... | Touches `architecture.md` if intent describes... |
+| --- | --- |
+| new or removed capability | new or removed component |
+| change in scope or out-of-scope | tech stack change |
+| user-facing behavior change | data flow change |
+| change to a core principle | new critical external dependency |
+|  | shift in a dominant pattern |
+
+- If **no signals** are present → skip silently. No file is loaded.
+- If a signal **is** present → the agent asks the human first: *"This work unit likely affected [product / architecture]. Should I review and propose a diff?"*
+- Only on the human's "yes" does the agent load the relevant file. It then proposes a diff. The human applies (or rejects) the diff.
+
+**These files are never edited silently.** Two human checkpoints (review-or-not, then accept-diff-or-not) gate every change.
+
+If the relevant file does not exist and the signals say it should, the agent offers to create it fresh from the template at that moment.
+
+### Initial population
+
+Two valid paths:
+
+- **Manual.** The human fills `product.md` and/or `architecture.md` at adoption time. The templates show the expected sections.
+- **Just-in-time.** The framework works without them. The first time a shipped work unit triggers the update flow above, the agent will offer to create them. That is a natural moment to seed them with the relevant content from that work unit.
+
+Adoption never blocks on these files existing.
+
 ## On plans
 
 The framework does not include a `plan.md` artifact. Plans live in the agent's native task tooling (TodoWrite, plan mode, etc.) where they belong — they are designed to evolve during execution, and persisting them as markdown invites stale state. The only persistent plan-like content is `status.md → Handoff`, which carries the *next concrete step* across sessions.
@@ -80,11 +125,12 @@ If a work unit is complex enough that you genuinely want a persistent technical 
 ### Starting a new work unit
 
 1. Copy `_template/` to `work/<kebab-name>/`.
-2. Write `intent.md` in draft. Iterate with the agent — capture What, Why, Scope, Out of scope, Open questions. Decisions surface during iteration and populate the `Decisions` section.
-3. When the intent is clear and open questions are resolved (into decisions, ADRs, or out-of-scope), change `status: sealed`, fill `sealed:`, and set `status.md → phase: building`.
-4. Execute. Plan and progress live in the agent's native task tools; the next concrete step lives in `status.md → Handoff`.
-5. Before ending each session, update Handoff.
-6. When done, set `phase: shipped`.
+2. If `product.md` and/or `architecture.md` exist, the agent loads them now to align the new intent with project direction. (If they do not exist, the framework works fine without them.)
+3. Write `intent.md` in draft. Iterate with the agent — capture What, Why, Scope, Out of scope, Open questions. Decisions surface during iteration and populate the `Decisions` section.
+4. When the intent is clear and open questions are resolved (into decisions, ADRs, or out-of-scope), change `status: sealed`, fill `sealed:`, and set `status.md → phase: building`.
+5. Execute. Plan and progress live in the agent's native task tools; the next concrete step lives in `status.md → Handoff`.
+6. Before ending each session, update Handoff.
+7. When done, set `phase: shipped`. The agent reviews the sealed intent for product/architecture signals and proposes diffs to project-level docs only if warranted (see "Project-level docs").
 
 ### Continuing a work unit
 

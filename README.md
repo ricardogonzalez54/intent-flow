@@ -48,8 +48,8 @@ your-project/
 ├── AGENTS.md                       # entry point for coding agents (agent-agnostic)
 ├── intent-flow/
 │   ├── README.md                   # operational manual
-│   ├── product.md                  # global product intent (living)
-│   ├── architecture.md             # current architecture (living)
+│   ├── product.md                  # global product intent (living, optional)
+│   ├── architecture.md             # current architecture (living, optional)
 │   ├── adr/                        # cross-cutting decisions, immortalized
 │   └── work/
 │       ├── _template/              # copy from here for new work units
